@@ -496,6 +496,7 @@ class GameLogic {
   }
 
   triggerVictory(type) {
+    const s = this.state;
     s.gameOver = true;
     s.victoryType = type;
 
@@ -512,6 +513,7 @@ class GameLogic {
   }
 
   triggerDefeat(reason) {
+    const s = this.state;
     s.gameOver = true;
     const messages = {
       time: '时间耗尽，未能达成目标。'
