@@ -34,25 +34,43 @@ class MapRenderer {
   }
 
   initProvinceOutlines() {
-    // 为每个省份创建简化的多边形轮廓
-    // 使用六边形近似每个省份的位置
+    // 为每个省份创建独特的多边形轮廓，模拟真实地理形状
     const gameProvinces = GAME_DATA.provinces;
 
     for (const [id, prov] of Object.entries(gameProvinces)) {
-      this.provinceOutlines[id] = this.createHexOutline(prov.x, prov.y, 2.5);
+      // 使用不同的形状和大小让每个省份看起来独特
+      const hash = this.hashString(id);
+      const vertexCount = 5 + (hash % 4); // 5-8边形
+      const size = 1.8 + (hash % 100) / 100 * 1.8; // 可变大小
+      const rotation = (hash % 360) * Math.PI / 180;
+
+      this.provinceOutlines[id] = this.createOrganicShape(prov.x, prov.y, size, vertexCount, rotation, hash);
     }
   }
 
-  createHexOutline(cx, cy, size) {
+  createOrganicShape(cx, cy, size, vertices, rotation, seed) {
     const points = [];
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 3) * i - Math.PI / 6;
+    for (let i = 0; i < vertices; i++) {
+      const angle = (Math.PI * 2 / vertices) * i + rotation;
+      // 添加不规则性使形状更自然
+      const variance = 0.7 + ((seed >> (i * 3)) % 60) / 100;
+      const r = size * variance;
       points.push({
-        x: cx + size * Math.cos(angle),
-        y: cy + size * Math.sin(angle)
+        x: cx + r * Math.cos(angle),
+        y: cy + r * Math.sin(angle)
       });
     }
     return points;
+  }
+
+  hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
   }
 
   calculateProvincePixels() {
@@ -63,9 +81,7 @@ class MapRenderer {
   }
 
   worldToScreen(wx, wy) {
-    // 将经纬度映射到屏幕坐标
-    const centerX = this.width / 2;
-    const centerY = this.height / 2;
+    // 将经纬度映射到屏幕坐标 - 使用更直观的映射
     const scale = Math.min(this.width, this.height) / 180 * this.camera.zoom;
 
     const sx = (wx + 180) * (this.width / 360) * this.camera.zoom - this.camera.x;
@@ -75,8 +91,6 @@ class MapRenderer {
   }
 
   screenToWorld(sx, sy) {
-    const centerX = this.width / 2;
-    const centerY = this.height / 2;
     const scale = Math.min(this.width, this.height) / 180 * this.camera.zoom;
 
     const wx = (sx + this.camera.x) / (this.width / 360) / this.camera.zoom - 180;
