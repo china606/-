@@ -507,6 +507,8 @@ body {
   justify-content: center;
 }
 
+.hidden { display: none !important; }
+
 #historical-event.hidden { display: none; }
 
 .event-content {
