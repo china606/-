@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虚拟国家扩张 - Virtual Nation Expansion</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game-container">
+  <!-- 顶部菜单栏 -->
+  <div id="top-bar">
+    <div id="nation-info">
+      <span id="nation-name">选择你的国家</span>
+      <span id="year-display">1936年</span>
+    </div>
+    <div id="resource-bar">
+      <div class="resource"><span class="resource-icon">💰</span><span id="money">1000</span></div>
+      <div class="resource"><span class="resource-icon">🏭</span><span id="industry">10</span></div>
+      <div class="resource"><span class="resource-icon">🌾</span><span id="food">50</span></div>
+      <div class="resource"><span class="resource-icon">⚔️</span><span id="military">1000</span></div>
+      <div class="resource"><span class="resource-icon">😊</span><span id="happiness">70</span>%</div>
+      <div class="resource"><span class="resource-icon">👥</span><span id="population">1000万</span></div>
+    </div>
+    <div id="top-buttons">
+      <button id="pause-btn" onclick="togglePause()">⏸️ 暂停</button>
+      <button id="speed-btn" onclick="toggleSpeed()">⏩ 1x</button>
+    </div>
+  </div>
+
+  <!-- 左侧菜单 -->
+  <div id="left-menu">
+    <div class="menu-header">国家管理</div>
+    <button class="menu-btn" onclick="showPanel('ideology')">📜 主义路线</button>
+    <button class="menu-btn" onclick="showPanel('economy')">💰 经济发展</button>
+    <button class="menu-btn" onclick="showPanel('civilian')">🏛️ 民治发展</button>
+    <button class="menu-btn" onclick="showPanel('agriculture')">🌾 农业发展</button>
+    <button class="menu-btn" onclick="showPanel('military')">⚔️ 军事发展</button>
+    <button class="menu-btn" onclick="showPanel('construction')">🏗️ 建设</button>
+    <button class="menu-btn" onclick="showPanel('finance')">🏦 金融</button>
+    <button class="menu-btn" onclick="showPanel('funding')">🎁 资助</button>
+    <button class="menu-btn" onclick="showPanel('nuclear')">☢️ 核武器</button>
+    <button class="menu-btn" onclick="showPanel('diplomacy')">🕊️ 外交</button>
+    <button class="menu-btn" onclick="showPanel('research')">🔬 科技研发</button>
+  </div>
+
+  <!-- 地图画布 -->
+  <canvas id="map-canvas"></canvas>
+
+  <!-- 底部信息栏 -->
+  <div id="bottom-bar">
+    <div id="selected-info">
+      <span id="selected-region">未选择</span>
+      <span id="region-details"></span>
+    </div>
+    <div id="event-log">
+      <div id="event-text">欢迎来到虚拟国家扩张游戏！请先选择一个国家开始。</div>
+    </div>
+  </div>
+
+  <!-- 国家选择面板 -->
+  <div id="nation-select" class="panel active">
+    <h2>选择你的国家</h2>
+    <div id="nation-grid"></div>
+  </div>
+
+  <!-- 各种管理面板 -->
+  <div id="ideology-panel" class="panel">
+    <div class="panel-header">
+      <h3>📜 主义路线</h3>
+      <button class="close-btn" onclick="closePanel('ideology')">✕</button>
+    </div>
+    <div class="panel-content" id="ideology-content"></div>
+  </div>
+
+  <div id="economy-panel" class="panel">
+    <div class="panel-header">
+      <h3>💰 经济发展</h3>
+      <button class="close-btn" onclick="closePanel('economy')">✕</button>
+    </div>
+    <div class="panel-content" id="economy-content"></div>
+  </div>
+
+  <div id="civilian-panel" class="panel">
+    <div class="panel-header">
+      <h3>🏛️ 民治发展</h3>
+      <button class="close-btn" onclick="closePanel('civilian')">✕</button>
+    </div>
+    <div class="panel-content" id="civilian-content"></div>
+  </div>
+
+  <div id="agriculture-panel" class="panel">
+    <div class="panel-header">
+      <h3>🌾 农业发展</h3>
+      <button class="close-btn" onclick="closePanel('agriculture')">✕</button>
+    </div>
+    <div class="panel-content" id="agriculture-content"></div>
+  </div>
+
+  <div id="military-panel" class="panel">
+    <div class="panel-header">
+      <h3>⚔️ 军事发展</h3>
+      <button class="close-btn" onclick="closePanel('military')">✕</button>
+    </div>
+    <div class="panel-content" id="military-content"></div>
+  </div>
+
+  <div id="construction-panel" class="panel">
+    <div class="panel-header">
+      <h3>🏗️ 建设</h3>
+      <button class="close-btn" onclick="closePanel('construction')">✕</button>
+    </div>
+    <div class="panel-content" id="construction-content"></div>
+  </div>
+
+  <div id="finance-panel" class="panel">
+    <div class="panel-header">
+      <h3>🏦 金融</h3>
+      <button class="close-btn" onclick="closePanel('finance')">✕</button>
+    </div>
+    <div class="panel-content" id="finance-content"></div>
+  </div>
+
+  <div id="funding-panel" class="panel">
+    <div class="panel-header">
+      <h3>🎁 资助</h3>
+      <button class="close-btn" onclick="closePanel('funding')">✕</button>
+    </div>
+    <div class="panel-content" id="funding-content"></div>
+  </div>
+
+  <div id="nuclear-panel" class="panel">
+    <div class="panel-header">
+      <h3>☢️ 核武器</h3>
+      <button class="close-btn" onclick="closePanel('nuclear')">✕</button>
+    </div>
+    <div class="panel-content" id="nuclear-content"></div>
+  </div>
+
+  <div id="diplomacy-panel" class="panel">
+    <div class="panel-header">
+      <h3>🕊️ 外交</h3>
+      <button class="close-btn" onclick="closePanel('diplomacy')">✕</button>
+    </div>
+    <div class="panel-content" id="diplomacy-content"></div>
+  </div>
+
+  <div id="research-panel" class="panel">
+    <div class="panel-header">
+      <h3>🔬 科技研发</h3>
+      <button class="close-btn" onclick="closePanel('research')">✕</button>
+    </div>
+    <div class="panel-content" id="research-content"></div>
+  </div>
+
+  <!-- 军队调动面板 -->
+  <div id="army-move-panel" class="panel">
+    <div class="panel-header">
+      <h3>⚔️ 军队调动</h3>
+      <button class="close-btn" onclick="closeArmyPanel()">✕</button>
+    </div>
+    <div class="panel-content">
+      <div id="army-move-info"></div>
+      <div id="army-move-actions"></div>
+    </div>
+  </div>
+
+  <!-- 战斗动画覆盖层 -->
+  <div id="battle-overlay" class="hidden">
+    <canvas id="battle-canvas"></canvas>
+    <div id="battle-info"></div>
+  </div>
+
+  <!-- 通知 -->
+  <div id="notifications"></div>
+
+  <!-- 历史大事件弹窗 -->
+  <div id="historical-event" class="hidden">
+    <div class="event-content">
+      <h3 id="event-title"></h3>
+      <p id="event-description"></p>
+      <div id="event-choices"></div>
+    </div>
+  </div>
+
+  <!-- 游戏结束画面 -->
+  <div id="game-over" class="hidden">
+    <div class="game-over-content">
+      <h2 id="game-over-title"></h2>
+      <p id="game-over-stats"></p>
+      <button onclick="restartGame()">重新开始</button>
+    </div>
+  </div>
+</div>
+
+<script src="game_data.js"></script>
+<script src="map_renderer.js"></script>
+<script src="game_logic.js"></script>
+<script src="ui.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
+
