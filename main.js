@@ -35,6 +35,11 @@ function initGame() {
   // 渲染国家选择
   ui.renderNationSelect();
 
+  // 初始提示
+  setTimeout(() => {
+    if (ui) ui.notify('请先选择一个国家开始游戏！', 'info');
+  }, 500);
+
   // 启动游戏循环
   requestAnimationFrame(gameLoop);
 
